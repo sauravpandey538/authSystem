@@ -3,6 +3,7 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+
 interface User {
     username: string,
     email: string,
@@ -39,6 +40,7 @@ const Login: React.FC = () => {
             const response = await axios.post('/api/user/login', data)
             console.log(response.data);
             router.push("/user/profile")
+
         } catch (error) {
             console.log(error)
         }
