@@ -54,19 +54,23 @@ const Signup: React.FC = () => {
 
     return (
         <div className='flex justify-center items-center h-screen w-screen'>
-            <div className='h-1/2 w-96 bg-slate-400 rounded-2xl p-6'>
+            <div className='h-fit w-96 bg-slate-400 rounded-2xl p-6'>
                 <h1 className='w-full text-center py-5 text-xl font-semibold'>Signup Page</h1>
                 <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
+
                     {api.map((item) => (
-                        <input
-                            key={item.id}
-                            name={item.name}
-                            type={item.type}
-                            placeholder={`Please enter your ${item.placeholder}`}
-                            value={data[item.name]}
-                            onChange={handleChange}
-                            className='w-full p-2 rounded'
-                        />
+                        <div>
+                            <input
+                                key={item.id}
+                                name={item.name}
+                                type={item.type}
+                                placeholder={`Please enter your ${item.placeholder}`}
+                                value={data[item.name]}
+                                onChange={handleChange}
+                                className='w-full p-2 rounded'
+                            />
+
+                        </div>
                     ))}
                     <button
                         type='submit'
