@@ -10,9 +10,6 @@ export async function POST(request:NextRequest){
    try {
      const reqBody = await request.json();
      const {email,password} = reqBody;
-    //  if (email.trim() === " " || password.trim() === " "){
-    //      NextResponse.json({message:"Enter details correctly"},{status:400})
-    //  }
      const user = await User.findOne({email})
      if(!user){
          return NextResponse.json({message:'User is not being registered yet'},{status:404})
@@ -21,23 +18,26 @@ export async function POST(request:NextRequest){
      if (!checkPassword) {
         return NextResponse.json({message:'Password seems incorrect'},{status:404})
      }
-     //later to change
-    //  return NextResponse.json({message:'Everything looks perfect '},{status:200})
-    
-    
-     // token session
-     const tokenData = {
-        id: user._id,
-        username: user.username,
-        email: user.email
-     }
 
-     const token = await jwt.sign(tokenData,process.env.TOKEN_SECRET_PASSWORD, {expiresIn : '1d'})
-     const response = NextResponse.json({mesage:"User loggedIn sucessfully"}, {status:200});
-     response.cookies.set("token",token,{
-        httpOnly:true
-     })
+    if(user.isVerified === true ){
+
+  const tokenData = {
+   id: user._id,
+   username: user.username,
+   email: user.email
+}
+
+const token = await jwt.sign(tokenData,process.env.TOKEN_SECRET_PASSWORD, {expiresIn : '1d'})
+const response = NextResponse.json({mesage:"User loggedIn sucessfully"}, {status:200});
+response.cookies.set("token",token,{
+   httpOnly:true
+})
 return response;
+}
+else {
+  return NextResponse.json({message:'Verify yourself first'},{status:400})
+ }
+   
 
    } catch (error) {
     console.log(error)
