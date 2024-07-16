@@ -31,18 +31,18 @@ export const sendEmail = async ({ email, emailType, userId }: EmailOptions) => {
             port: 465,
             secure: true,
             auth: {
-                user: process.env.EMAIL_USER, 
-                pass: process.env.EMAIL_PASS, 
+                user: process.env.EMAIL_USER!, 
+                pass: process.env.EMAIL_PASS!, 
             }
         });
         console.log(transporter)
 
         const mailOptions = {
-            from: process.env.EMAIL_USER, 
+            from: process.env.EMAIL_USER!, 
             to: email,
             subject: emailType === "VERIFY" ? "Verify your email" : "Reset your password",
-            html: `<p>Click <a href="${process.env.DOMAIN}/verifyemail?token=${hashedToken}">here</a> to ${emailType === "VERIFY" ? "verify your email" : "reset your password"} 
-            or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/verifyemail?token=${hashedToken}</p>`,
+            html: `<p>Click <a href="${process.env.DOMAIN!}/verifyemail?token=${hashedToken}">here</a> to ${emailType === "VERIFY" ? "verify your email" : "reset your password"} 
+            or copy and paste the link below in your browser. <br> ${process.env.DOMAIN!}/verifyemail?token=${hashedToken}</p>`,
         };
 
         const mailResponse = await transporter.sendMail(mailOptions);
