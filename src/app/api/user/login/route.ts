@@ -4,9 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import jwt from 'jsonwebtoken';
 
-connect();
 
 export async function POST(request: NextRequest) {
+   await connect();
     try {
         const reqBody = await request.json();
         const { email, password } = reqBody;
@@ -28,14 +28,14 @@ export async function POST(request: NextRequest) {
                 email: user.email,
             };
 
-            const token = jwt.sign(tokenData, process.env.TOKEN_SECRET_PASSWORD!, { expiresIn: '1d' });
+            const token =  jwt.sign(tokenData, process.env.TOKEN_SECRET_PASSWORD!, { expiresIn: '1d' });
             
             const response = NextResponse.json({ message: "User logged in successfully" }, { status: 200 });
             response.cookies.set("token", token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
-                maxAge: 60 * 60 * 24 // 1 day
+                maxAge: 60 * 60 * 24 
             });
 
             return response;
