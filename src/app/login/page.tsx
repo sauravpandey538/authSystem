@@ -3,9 +3,12 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-
+import toast, { Toaster } from 'react-hot-toast';
+import { GoEye } from "react-icons/go";
+import { GoEyeClosed } from "react-icons/go";
+import Logo from "../../../public/logo.png"
+import Image from 'next/image';
 interface User {
-    username: string,
     email: string,
     password: string,
     [key: string]: string | number;
@@ -19,21 +22,22 @@ interface Api {
 }
 
 const Login: React.FC = () => {
+    const [showPass, setShowPass] = useState<boolean>(false)
     const router = useRouter();
     const [data, setData] = useState<User>({
-        username: '',
+
         email: '',
         password: ''
     });
     const [error, setError] = useState<User>({
-        username: '',
+
         email: '',
         password: ''
     })
 
     const api: Api[] = [
         { id: 2, name: 'email', placeholder: 'email', type: 'text' },
-        { id: 3, name: 'password', placeholder: 'password', type: 'password' },
+        { id: 3, name: 'password', placeholder: 'password', type: showPass ? 'text' : 'password' },
     ];
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,11 +46,10 @@ const Login: React.FC = () => {
         setError({ ...error, [name]: '' })
 
     };
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    const handleSubmit = async () => {
         let hasError = false;
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (data.username.trim() === '') {
+        if (data.email.trim() === '') {
             setError(prevError => ({ ...prevError, email: 'Enter an email' }))
             hasError = true;
         }
@@ -55,10 +58,7 @@ const Login: React.FC = () => {
             hasError = true;
         }
 
-        if (data.username.trim() === '') {
-            setError(prevError => ({ ...prevError, username: 'Enter an username' }))
-            hasError = true;
-        }
+
         if (data.password.trim() === '') {
             setError(prevError => ({ ...prevError, password: 'Enter an password' }))
             hasError = true;
@@ -70,6 +70,11 @@ const Login: React.FC = () => {
                 router.push("/user/profile")
 
             } catch (error) {
+                toast.error('Unexpected inputs', {
+                    duration: 4000,
+                    position: 'bottom-center'
+                });
+
                 console.log(error)
             }
         }
@@ -78,11 +83,15 @@ const Login: React.FC = () => {
     return (
         <div className='flex justify-center items-center h-screen w-screen bg-black text-white'>
             <div className='h-fit w-96  rounded-2xl p-6 bg-black'>
+
+
+                {/* <Image src={Logo} alt="Logo" className='rounded-xl  bg-transparent' /> */}
+
                 <h1 className='w-full text-center py-5 text-xl font-semibold'>Login Page</h1>
-                <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
+                <div className='flex flex-col gap-5'>
 
                     {api.map((item) => (
-                        <div>
+                        <div className='relative' key={item.id}>
                             <input
                                 key={item.id}
                                 name={item.name}
@@ -90,21 +99,33 @@ const Login: React.FC = () => {
                                 placeholder={`Enter your ${item.placeholder}`}
                                 value={data[item.name]}
                                 onChange={handleChange}
-                                className='w-full p-2 rounded bg-transparent border-gray-500 border-b-2  focus:outline-none'
+                                className='  w-full p-2 rounded bg-transparent border-gray-500 border-b-2  focus:outline-none'
                             />
+                            {
+                                item.name === 'password' &&
+                                <button
+                                    className='absolute top-4 right-0 '
+                                    onClick={() => setShowPass(!showPass)}>{showPass ? <GoEyeClosed /> : <GoEye />}</button>
+                            }
                             {error[item.name] && <p className='text-red-400'>{error[item.name]}</p>}
                         </div>
                     ))}
                     <button
-                        type='submit'
+                        onClick={handleSubmit}
                         className='bg-black font-bold w-full p-3 mt-3 rounded border-gray-500 border-2 hover:border-gray-200'
 
                     >Submit</button>
-                </form>
+                </div>
                 <Link href='/signup'>
-                    <span className='text-white font-bold mt-8 inline-block'>Go To Signup</span>
+                    <button
+
+                        className='bg-black font-semibold w-full p-3 mt-6 rounded hover:font-bold '
+
+                    >{"<"}---Signup</button>
                 </Link>
             </div>
+            <Toaster />
+
         </div>
     );
 };

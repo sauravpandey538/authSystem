@@ -2,8 +2,9 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useRouter } from "next/navigation";
-
+import toast, { Toaster } from 'react-hot-toast';
+import { GoEye } from "react-icons/go";
+import { GoEyeClosed } from "react-icons/go";
 interface User {
     username: string,
     email: string,
@@ -19,6 +20,8 @@ interface Api {
 }
 
 const Signup: React.FC = () => {
+    const [showPass, setShowPass] = useState<boolean>(false)
+
     const [data, setData] = useState<User>({
         username: '',
         email: '',
@@ -29,11 +32,11 @@ const Signup: React.FC = () => {
         email: '',
         password: ''
     })
-
+    const [loading, setLoading] = useState<boolean>(false)
     const api: Api[] = [
         { id: 1, name: 'username', placeholder: 'username', type: 'text' },
         { id: 2, name: 'email', placeholder: 'email', type: 'text' },
-        { id: 3, name: 'password', placeholder: 'password', type: 'password' },
+        { id: 3, name: 'password', placeholder: 'password', type: showPass ? 'text' : 'password' },
     ];
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,13 +44,11 @@ const Signup: React.FC = () => {
         setData({ ...data, [name]: value });
         setError({ ...error, [name]: '' })
     };
-    const router = useRouter();
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         let hasError = false;
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (data.username.trim() === '') {
+        if (data.email.trim() === '') {
             setError(prevError => ({ ...prevError, email: 'Enter an email' }))
             hasError = true;
         }
@@ -66,15 +67,33 @@ const Signup: React.FC = () => {
         }
         if (!hasError) {
             try {
+                setLoading(true)
                 const response = await axios.post('/api/user/signup', data);
                 console.log('User created successfully:', response.data);
-                router.push("/login")
+
+                toast.success("Verify your e-mail before login.", {
+                    duration: 7000,
+                    position: 'bottom-center'
+                });
+
+
+
             } catch (error) {
                 if (axios.isAxiosError(error)) {
+                    toast.error('Username or Email is already taken');
                     console.error('Error creating user:', error.response?.data);
                 } else {
+                    toast.error('Unexpected Error');
                     console.error('Unexpected error:', error);
                 }
+            }
+            finally {
+                setLoading(false)
+                setData({
+                    username: '',
+                    email: '',
+                    password: ''
+                })
             }
         }
 
@@ -85,10 +104,10 @@ const Signup: React.FC = () => {
         <div className='flex justify-center items-center h-screen w-screen bg-black text-white'>
             <div className='h-fit w-96  rounded-2xl p-6 bg-black'>
                 <h1 className='w-full text-center py-5 text-xl font-semibold'>Signup Page</h1>
-                <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
+                <div className='flex flex-col gap-5'>
 
                     {api.map((item) => (
-                        <div>
+                        <div key={item.id} className='relative'>
                             <input
                                 key={item.id}
                                 name={item.name}
@@ -98,19 +117,30 @@ const Signup: React.FC = () => {
                                 onChange={handleChange}
                                 className='w-full p-2 rounded bg-transparent border-gray-500 border-b-2  focus:outline-none'
                             />
+                            {
+                                item.name === 'password' &&
+                                <button
+                                    className='absolute top-4 right-0 '
+                                    onClick={() => setShowPass(!showPass)}>{showPass ? <GoEyeClosed /> : <GoEye />}</button>
+                            }
                             {error[item.name] && <p className='text-red-400'>{error[item.name]}</p>}
                         </div>
                     ))}
                     <button
-                        type='submit'
+                        onClick={handleSubmit}
                         className='bg-black font-bold w-full p-3 mt-3 rounded border-gray-500 border-2 hover:border-gray-200'
 
-                    >Submit</button>
-                </form>
+                    >{loading ? 'Loading...' : 'Submit'}</button>
+                </div>
                 <Link href='/login'>
-                    <span className='text-white font-bold mt-8 inline-block'>Go To Login</span>
+                    <button
+                        className='bg-black font-semibold w-full p-3 mt-6 rounded hover:font-bold '
+                    >
+                        Login ---{">"}</button>
                 </Link>
             </div>
+            <Toaster />
+
         </div>
     );
 };
