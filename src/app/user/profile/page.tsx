@@ -2,6 +2,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import toast, { Toaster } from 'react-hot-toast';
+
 interface UserApi {
     email: string,
     isAdmin: boolean,
@@ -16,17 +18,17 @@ const Profile: React.FC = ({ }) => {
     const [user, SetUser] = useState<UserApi | null>(null)
     const handleLogout = async () => {
         try {
-            const response = await axios.get('/api/user/logout')
-            console.log(response);
+            await axios.get('/api/user/logout')
             router.push('/')
         } catch (error: any) {
+            toast.error('Error during logout', { position: 'bottom-center' })
+
             console.log(error.message)
         }
     }
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get('/api/user/me')
-            console.log(response.data)
             SetUser(response.data.user)
         }
         fetchData()
@@ -38,6 +40,7 @@ const Profile: React.FC = ({ }) => {
             <button
                 className=' bg-slate-300 p-2 rounded-lg font-semibold'
                 onClick={handleLogout}>Logout</button>
+            <Toaster />
         </div>
     );
 };

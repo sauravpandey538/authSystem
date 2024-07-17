@@ -5,6 +5,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 import { MdOutlineError } from "react-icons/md";
+import toast, { Toaster } from 'react-hot-toast';
 
 
 export default function VerifyEmailPage() {
@@ -17,10 +18,9 @@ export default function VerifyEmailPage() {
         try {
             await axios.post('/api/user/verifyemail', { token })
             setVerified(true);
-            console.log('success')
+            toast.success('Verified')
         } catch (error: any) {
-            console.log('unsucessful')
-
+            toast.error('Error')
             setError(true);
             console.log(error);
 
@@ -42,8 +42,6 @@ export default function VerifyEmailPage() {
         <div className="flex flex-col items-center justify-center min-h-screen py-2">
 
             <h1 className="text-2xl">Verify Email</h1>
-            {/* <h2 className="p-2 bg-green-500 text-black">{token ? `${token}` : "no token"}</h2> */}
-
             {verified && (
                 <div className="mt-7 flex flex-col gap-7 items-center justify-center">
                     <h2 className="text-xl"> Congratulation, Your Email Has Verified Sucessfully !!</h2>
@@ -68,6 +66,7 @@ export default function VerifyEmailPage() {
                     </Link>
                 </div>
             )}
+            <Toaster />
         </div>
     )
 

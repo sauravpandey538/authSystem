@@ -23,6 +23,7 @@ interface Api {
 
 const Login: React.FC = () => {
     const [showPass, setShowPass] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
     const router = useRouter();
     const [data, setData] = useState<User>({
 
@@ -47,6 +48,7 @@ const Login: React.FC = () => {
 
     };
     const handleSubmit = async () => {
+        setLoading(true)
         let hasError = false;
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (data.email.trim() === '') {
@@ -65,19 +67,20 @@ const Login: React.FC = () => {
         }
         if (!hasError) {
             try {
-                const response = await axios.post('/api/user/login', data)
-                console.log(response.data);
+                await axios.post('/api/user/login', data)
                 router.push("/user/profile")
 
             } catch (error) {
-                toast.error('Unexpected inputs', {
+                toast.error(
+                    "Email and password didn't match", {
                     duration: 4000,
                     position: 'bottom-center'
                 });
 
-                console.log(error)
+                console.error(error)
             }
         }
+        setLoading(false)
 
     }
     return (

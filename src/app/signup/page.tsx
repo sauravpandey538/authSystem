@@ -70,32 +70,31 @@ const Signup: React.FC = () => {
             try {
                 setLoading(true)
                 const response = await axios.post('/api/user/signup', data);
-                console.log('User created successfully:', response.data);
-
                 toast.success("Verify your e-mail before login.", {
                     duration: 7000,
                     position: 'bottom-center'
                 });
+                setData({
+                    username: '',
+                    email: '',
+                    password: ''
+                })
 
 
 
             } catch (error) {
                 if (axios.isAxiosError(error)) {
-                    toast.error('Username or Email is already taken');
+                    toast.error('Username or Email is already taken', { position: 'bottom-center' });
                     console.error('Error creating user:', error.response?.data);
                 } else {
-                    toast.error('Unexpected Error');
+                    toast.error('Unexpected Error', { position: 'bottom-center' });
                     console.error('Unexpected error:', error);
                 }
             }
             finally {
 
                 setLoading(false)
-                setData({
-                    username: '',
-                    email: '',
-                    password: ''
-                })
+
             }
         }
 
@@ -114,7 +113,6 @@ const Signup: React.FC = () => {
                     duration: 7000,
                     position: 'bottom-center'
                 });
-                console.log('Email sent successfully', response);
 
             } catch (error) {
                 toast.error('Unexpected Error');
