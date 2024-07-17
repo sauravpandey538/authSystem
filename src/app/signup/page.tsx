@@ -21,7 +21,6 @@ interface Api {
 
 const Signup: React.FC = () => {
     const [showPass, setShowPass] = useState<boolean>(false)
-    const [passLoading, setPassLoading] = useState<boolean>(false)
 
     const [data, setData] = useState<User>({
         username: '',
@@ -101,33 +100,7 @@ const Signup: React.FC = () => {
 
     };
 
-    const handleForgetPasswordOperation = async () => {
-        setPassLoading(true)
-        if (data.email && error.email === '') {
-            try {
-                const response = await axios.post('/api/user/sendPasswordCall',
-                    {
-                        email: data.email,
-                        emailType: "RESET"
-                    })
-                toast.success("Check your email for verification", {
-                    duration: 7000,
-                    position: 'bottom-center'
-                });
 
-            } catch (error) {
-                toast.error('Unexpected Error');
-                console.error('An error occurred while sending email', error);
-            }
-        }
-        else {
-            toast.error('Enter your email wisely');
-
-        }
-        setPassLoading(false)
-
-
-    };
 
     return (
         <div className='flex justify-center items-center h-screen w-screen bg-black text-white'>
@@ -162,21 +135,14 @@ const Signup: React.FC = () => {
 
                     >{loading ? 'Loading...' : 'Submit'}</button>
                 </div>
-                <div className='flex w-full justify-between mt-6'>
 
-                    <Link href={''}
-                        onClick={handleForgetPasswordOperation}
-                    > <button
-                        className='bg-black font-semibold w-full p-3  rounded hover:font-bold text-slate-300'
+
+                <Link href='/login'>
+                    <button
+                        className='bg-black font-semibold w-full p-3  rounded hover:font-bold mt-4'
                     >
-                            {passLoading ? 'Sending email...' : 'Forget password'}</button> </Link>
-                    <Link href='/login'>
-                        <button
-                            className='bg-black font-semibold w-full p-3  rounded hover:font-bold '
-                        >
-                            Login ---{">"}</button>
-                    </Link>
-                </div>
+                        Login ---{">"}</button>
+                </Link>
             </div>
             <Toaster />
 

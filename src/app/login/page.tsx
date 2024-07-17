@@ -24,6 +24,8 @@ interface Api {
 const Login: React.FC = () => {
     const [showPass, setShowPass] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
+    const [passLoading, setPassLoading] = useState<boolean>(false)
+
     const router = useRouter();
     const [data, setData] = useState<User>({
 
@@ -83,6 +85,33 @@ const Login: React.FC = () => {
         setLoading(false)
 
     }
+    const handleForgetPasswordOperation = async () => {
+        setPassLoading(true)
+        if (data.email && error.email === '') {
+            try {
+                const response = await axios.post('/api/user/sendPasswordCall',
+                    {
+                        email: data.email,
+                        emailType: "RESET"
+                    })
+                toast.success("Check your email for verification", {
+                    duration: 7000,
+                    position: 'bottom-center'
+                });
+
+            } catch (error) {
+                toast.error('Unexpected Error');
+                console.error('An error occurred while sending email', error);
+            }
+        }
+        else {
+            toast.error('Enter your email wisely');
+
+        }
+        setPassLoading(false)
+
+
+    };
     return (
         <div className='flex justify-center items-center h-screen w-screen bg-black text-white'>
             <div className='h-fit w-96  rounded-2xl p-6 bg-black'>
@@ -119,13 +148,23 @@ const Login: React.FC = () => {
 
                     >{loading ? 'Submitting ' : 'Submit'}</button>
                 </div>
-                <Link href='/signup'>
-                    <button
+                <div className='flex w-full justify-between mt-6'>
 
-                        className='bg-black font-semibold w-full p-3 mt-6 rounded hover:font-bold '
+                    <Link href={''}
+                        onClick={handleForgetPasswordOperation}
+                    > <button
+                        className='bg-black font-semibold w-full p-3  rounded hover:font-bold text-slate-300'
+                    >
+                            {passLoading ? 'Sending email...' : 'Forget password'}</button> </Link>
+                    <Link href='/signup'>
+                        <button
 
-                    >{"<"}---Signup</button>
-                </Link>
+                            className='bg-black font-semibold w-full p-3  rounded hover:font-bold '
+
+                        >{"<"}---Signup</button>
+                    </Link>
+                </div>
+
             </div>
             <Toaster />
 
