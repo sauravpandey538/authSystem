@@ -31,9 +31,9 @@ export async function POST(request: NextRequest) {
         });
 
         const savedUser = await newUser.save();
-        console.log('New user created:', savedUser);
 
         await sendEmail({email, emailType: "VERIFY", userId: savedUser._id})
+        // fields are adding from this side
 
 
         return NextResponse.json({ message: 'User created successfully', user: savedUser }, { status: 201 });

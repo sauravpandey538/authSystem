@@ -5,6 +5,7 @@ import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { GoEye } from "react-icons/go";
 import { GoEyeClosed } from "react-icons/go";
+import { sendEmail } from '@/helpers/mailer';
 interface User {
     username: string,
     email: string,
@@ -88,6 +89,7 @@ const Signup: React.FC = () => {
                 }
             }
             finally {
+
                 setLoading(false)
                 setData({
                     username: '',
@@ -100,11 +102,37 @@ const Signup: React.FC = () => {
 
     };
 
+    const handleForgetPasswordOperation = async () => {
+        if (data.email && error.email === '') {
+            try {
+                const response = await axios.post('/api/user/sendPasswordCall',
+                    {
+                        email: data.email,
+                        emailType: "RESET"
+                    })
+                toast.success("Check your email for verification", {
+                    duration: 7000,
+                    position: 'bottom-center'
+                });
+                console.log('Email sent successfully', response);
+
+            } catch (error) {
+                toast.error('Unexpected Error');
+                console.error('An error occurred while sending email', error);
+            }
+        }
+        else {
+            toast.error('Enter your email wisely');
+
+        }
+
+    };
 
     return (
         <div className='flex justify-center items-center h-screen w-screen bg-black text-white'>
             <div className='h-fit w-96  rounded-2xl p-6 bg-black'>
                 <h1 className='w-full text-center py-5 text-xl font-semibold'>Signup Page</h1>
+
                 <div className='flex flex-col gap-5'>
 
                     {api.map((item) => (
@@ -133,12 +161,21 @@ const Signup: React.FC = () => {
 
                     >{loading ? 'Loading...' : 'Submit'}</button>
                 </div>
-                <Link href='/login'>
-                    <button
-                        className='bg-black font-semibold w-full p-3 mt-6 rounded hover:font-bold '
+                <div className='flex w-full justify-between mt-6'>
+
+                    <Link href={''}
+                        onClick={handleForgetPasswordOperation}
+                    > <button
+                        className='bg-black font-semibold w-full p-3  rounded hover:font-bold text-slate-300'
                     >
-                        Login ---{">"}</button>
-                </Link>
+                            forget password</button> </Link>
+                    <Link href='/login'>
+                        <button
+                            className='bg-black font-semibold w-full p-3  rounded hover:font-bold '
+                        >
+                            Login ---{">"}</button>
+                    </Link>
+                </div>
             </div>
             <Toaster />
 
