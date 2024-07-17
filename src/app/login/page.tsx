@@ -117,7 +117,7 @@ const Login: React.FC = () => {
                         onClick={handleSubmit}
                         className='bg-black font-bold w-full p-3 mt-3 rounded border-gray-500 border-2 hover:border-gray-200'
 
-                    >Submit</button>
+                    >{loading ? 'Submitting ' : 'Submit'}</button>
                 </div>
                 <Link href='/signup'>
                     <button

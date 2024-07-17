@@ -5,7 +5,6 @@ import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { GoEye } from "react-icons/go";
 import { GoEyeClosed } from "react-icons/go";
-import { sendEmail } from '@/helpers/mailer';
 interface User {
     username: string,
     email: string,
@@ -22,6 +21,7 @@ interface Api {
 
 const Signup: React.FC = () => {
     const [showPass, setShowPass] = useState<boolean>(false)
+    const [passLoading, setPassLoading] = useState<boolean>(false)
 
     const [data, setData] = useState<User>({
         username: '',
@@ -102,6 +102,7 @@ const Signup: React.FC = () => {
     };
 
     const handleForgetPasswordOperation = async () => {
+        setPassLoading(true)
         if (data.email && error.email === '') {
             try {
                 const response = await axios.post('/api/user/sendPasswordCall',
@@ -123,6 +124,8 @@ const Signup: React.FC = () => {
             toast.error('Enter your email wisely');
 
         }
+        setPassLoading(false)
+
 
     };
 
@@ -166,7 +169,7 @@ const Signup: React.FC = () => {
                     > <button
                         className='bg-black font-semibold w-full p-3  rounded hover:font-bold text-slate-300'
                     >
-                            forget password</button> </Link>
+                            {passLoading ? 'Sending email...' : 'Forget password'}</button> </Link>
                     <Link href='/login'>
                         <button
                             className='bg-black font-semibold w-full p-3  rounded hover:font-bold '

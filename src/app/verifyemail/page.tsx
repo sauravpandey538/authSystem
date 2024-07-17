@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 import { MdOutlineError } from "react-icons/md";
 import toast, { Toaster } from 'react-hot-toast';
@@ -14,7 +14,7 @@ export default function VerifyEmailPage() {
     const [verified, setVerified] = useState(false);
     const [error, setError] = useState(false);
 
-    const verifyUserEmail = async () => {
+    const verifyUserEmail = useCallback(async () => {
         try {
             await axios.post('/api/user/verifyemail', { token })
             setVerified(true);
@@ -25,7 +25,7 @@ export default function VerifyEmailPage() {
             console.log(error);
 
         }
-    }
+    }, [token])
     useEffect(() => {
         const urlToken = window.location.search.split("=")[1];
         setToken(urlToken || "");
